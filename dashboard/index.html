@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CeutaOSINT - Ciberinteligencia & Análisis Forense</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <div class="brand-shield">🛡️</div>
+            <div class="brand-title">
+                <h1>CEUTA OSINT</h1>
+                <span>CYBER INTEL V1.0</span>
+            </div>
+        </div>
+
+        <div class="nav-menu">
+            <div class="nav-item active" id="nav-dashboard" onclick="switchTab('dashboard')">
+                <span>📊</span> Dashboard Principal
+            </div>
+            <div class="nav-item" id="nav-evidence" onclick="switchTab('evidence')">
+                <span>🔍</span> Registro de Evidencias
+            </div>
+            <div class="nav-item" id="nav-loop" onclick="switchTab('loop')">
+                <span>🔄</span> Bucle de Agentes & Scores
+            </div>
+            <div class="nav-item" id="nav-report" onclick="switchTab('report')">
+                <span>📄</span> Informe Ejecutivo
+            </div>
+        </div>
+
+        <div class="live-indicator">
+            <div class="pulse-dot"></div>
+            <span>Agente OSINT Activo en Tiempo Real</span>
+        </div>
+    </div>
+
+    <!-- Main Section -->
+    <div class="main">
+        <div class="topbar">
+            <h2 id="topbar-title">Investigación Forense OSINT Multidominio</h2>
+            <div class="topbar-actions">
+                <button class="btn btn-ghost" onclick="exportReportJSON()">💾 Exportar JSON</button>
+                <button class="btn btn-ghost" onclick="exportReportTXT()">📄 Exportar TXT</button>
+                <button class="btn btn-success" onclick="refreshNewIntelligence()">🔄 Refrescar Evidencias</button>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- CENTRO DE CONTROL UNIFICADO: BÚSQUEDA IA, FECHAS & REFRESH EN TIEMPO REAL -->
+            <div class="command-center-card">
+                <div class="command-header">
+                    <div class="command-title-group">
+                        <span class="command-icon">⚡</span>
+                        <div>
+                            <div class="command-badge-title">CENTRO DE MANDO OSINT & BÚSQUEDA UNIVERSAL</div>
+                            <div class="command-subtitle">Escribe cualquier instrucción de búsqueda (conflictos bélicos, ciberataques, crisis fronterizas o cualquier tema global). La IA analizará vectores en vivo y sincronizará todas las evidencias.</div>
+                        </div>
+                    </div>
+                    <div class="command-status-badge" id="command-status-badge">🟢 SISTEMA VIVO</div>
+                </div>
+
+                <!-- FILA 1: BUSCADOR POR SENTENCIA / PROMPT IA + BOTÓN MAESTRO -->
+                <div class="command-input-row">
+                    <div class="input-with-icon">
+                        <span class="input-icon">🤖</span>
+                        <input type="text" id="ai-prompt-input" class="command-text-input" 
+                            placeholder="Escribe cualquier instrucción (ej: 'Buscar información referente al ataque con Drones desde Rusia hasta Ucrania', 'Ciberataques ransomware', 'Ceuta frontera Tarajal')..." 
+                            onkeydown="if(event.key === 'Enter') unifiedSearchAndRefresh()">
+                    </div>
+                    <button class="btn btn-primary btn-execute-all" id="btn-unified-execute" onclick="unifiedSearchAndRefresh()">
+                        🔍 BUSCAR Y ACTUALIZAR
+                    </button>
+                    <button class="btn btn-ghost" onclick="resetAllFiltersAndSearch()">
+                        🧹 Restablecer Todo
+                    </button>
+                </div>
+
+                <!-- FILA 2: FECHAS Y PRESETS RÁPIDOS INTEGRADOS -->
+                <div class="command-dates-row">
+                    <div class="date-pickers-group">
+                        <div class="date-field">
+                            <label for="start-date">📅 Desde:</label>
+                            <input type="date" id="start-date" class="date-input" onchange="unifiedSearchAndRefresh()">
+                        </div>
+                        <div class="date-field">
+                            <label for="end-date">📅 Hasta:</label>
+                            <input type="date" id="end-date" class="date-input" onchange="unifiedSearchAndRefresh()">
+                        </div>
+                    </div>
+                    <div class="date-presets-group">
+                        <span class="presets-label">Filtro rápido:</span>
+                        <button class="btn-preset active-preset" id="preset-all" onclick="applyPresetAndSearch('all')">🌐 Todo el Histórico</button>
+                        <button class="btn-preset" id="preset-recent" onclick="applyPresetAndSearch('recent')">🟢 Noticias de Hoy (Sep 2026)</button>
+                        <button class="btn-preset" id="preset-pre" onclick="applyPresetAndSearch('pre-event')">⚡ Pre-Evento (18-25 Jun)</button>
+                        <button class="btn-preset" id="preset-event" onclick="applyPresetAndSearch('event')">🚨 Evento (26-30 Jun)</button>
+                    </div>
+                </div>
+
+                <!-- FILA 3: SUGERENCIAS RÁPIDAS DE PROMPTS MULTIDOMINIO -->
+                <div class="command-suggestions-row">
+                    <span class="sugg-label">Sugerencias:</span>
+                    <button class="sugg-pill" onclick="setPromptAndRun('Buscar informacion referente al ataque con Drones desde Rusia hasta Ucrania.')">💥 Drones Rusia - Ucrania</button>
+                    <button class="sugg-pill" onclick="setPromptAndRun('Ciberataques con ransomware contra infraestructuras críticas y alertas CERT')">🛡️ Ciberataques Ransomware</button>
+                    <button class="sugg-pill" onclick="setPromptAndRun('Investigar convocatorias en TikTok y canales de Telegram para cruzar al espigón del Tarajal')">📱 Convocatorias Ceuta Tarajal</button>
+                    <button class="sugg-pill" onclick="setPromptAndRun('Rastrear acopio de aletas, trajes de neopreno y logística marítima en Fnideq')">🏊 Logística & Neoprenos</button>
+                    <button class="sugg-pill" onclick="setPromptAndRun('Obtener noticias en vivo y despachos de última hora hoy')">📰 Noticias en Vivo Hoy</button>
+                </div>
+
+                <!-- BANNER DE ESTADO Y FILTRO ACTIVO -->
+                <div id="unified-active-filter-badge" class="unified-active-filter-badge">
+                    Cargando sistema de ciberinteligencia...
+                </div>
+
+                <!-- DICTAMEN EJECUTIVO DE IA (SI HAY PROMPT ACTIVO) -->
+                <div id="ai-synopsis-banner" class="ai-synopsis-banner" style="display: none;">
+                    <div class="synopsis-header">
+                        <span>📋 Dictamen Ejecutivo de Inteligencia Artificial</span>
+                        <button class="btn-close-synopsis" onclick="closeSynopsis()">✕</button>
+                    </div>
+                    <div id="ai-synopsis-text" class="synopsis-content"></div>
+                </div>
+            </div>
+
+            <!-- TAB 1: DASHBOARD PRINCIPAL -->
+            <div id="tab-dashboard" class="tab-content active">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-val blue" id="metric-total-posts">0</div>
+                        <div class="metric-lbl">Evidencias Recopiladas</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-val green" id="metric-avg-score">0.0</div>
+                        <div class="metric-lbl">Puntuación Media Inteligencia</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-val amber" id="metric-pre-events">0</div>
+                        <div class="metric-lbl">Alertas Pre-Evento (Early Warning)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-val purple" id="metric-iterations">0</div>
+                        <div class="metric-lbl">Iteraciones de Búsqueda</div>
+                    </div>
+                </div>
+
+                <div class="score-panel">
+                    <div class="score-gauge-container">
+                        <div class="score-num" id="gauge-score-val">0.0 / 10</div>
+                        <div class="score-status" id="gauge-status-lbl">EVALUANDO CONFIDENCIA</div>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">Desglose de Algoritmo de Inteligencia (0 - 10.0)</h3>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+                            Evaluación automatizada multi-criterio. Si la puntuación es &lt; 7.0/10, el agente autónomo extrae nuevas palabras clave y relanza el bucle de búsqueda.
+                        </p>
+                        <div class="breakdown-grid">
+                            <div class="breakdown-item">
+                                <div class="lbl">Autoridad Fuente (30%)</div>
+                                <div class="val" id="score-auth">0.0</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="lbl">Corroboración (30%)</div>
+                                <div class="val" id="score-corr">0.0</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="lbl">Lead Time Temporal (25%)</div>
+                                <div class="val" id="score-temp">0.0</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="lbl">Especificidad (15%)</div>
+                                <div class="val" id="score-spec">0.0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-card">
+                    <div class="data-header">
+                        <h3>Evidencias Recientes de Ciberinteligencia</h3>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-ghost btn-sm category-filter-btn active" data-cat="" onclick="selectCategoryFilter(this, '')">Todas</button>
+                            <button class="btn btn-ghost btn-sm category-filter-btn" data-cat="CALL_TO_ACTION" onclick="selectCategoryFilter(this, 'CALL_TO_ACTION')">Convocatorias</button>
+                            <button class="btn btn-ghost btn-sm category-filter-btn" data-cat="LOGISTICS_ROUTES" onclick="selectCategoryFilter(this, 'LOGISTICS_ROUTES')">Rutas</button>
+                            <button class="btn btn-ghost btn-sm category-filter-btn" data-cat="EARLY_WARNING" onclick="selectCategoryFilter(this, 'EARLY_WARNING')">Pre-Evento</button>
+                            <button class="btn btn-ghost btn-sm category-filter-btn" data-cat="OFFICIAL_DISCLAIMER" onclick="selectCategoryFilter(this, 'OFFICIAL_DISCLAIMER')">Oficial</button>
+                        </div>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table class="intel-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Origen / Fuente</th>
+                                    <th>Fecha Publicación</th>
+                                    <th>Categoría</th>
+                                    <th>Titular / Resumen Integrado</th>
+                                    <th>Score (0-10)</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="posts-tbody-dashboard">
+                                <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Cargando evidencias...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: REGISTRO DE EVIDENCIAS -->
+            <div id="tab-evidence" class="tab-content">
+                <div class="data-card">
+                    <div class="data-header">
+                        <h3>🔍 Registro Completo de Evidencias OSINT</h3>
+                        <input type="text" id="search-evidence" placeholder="Buscar por palabra clave, fuente o usuario..." 
+                            style="background: var(--bg-dark); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; color: #fff; width: 300px;" 
+                            onkeyup="searchEvidenceTable()">
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="intel-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fuente / Autor</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Categoría</th>
+                                    <th>Titular & Extracto Ampliado</th>
+                                    <th>Score</th>
+                                    <th>Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody id="posts-tbody-evidence">
+                                <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Cargando registro completo...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: BUCLE DE AGENTES & SCORES -->
+            <div id="tab-loop" class="tab-content">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-val purple" id="loop-total-iter">0</div>
+                        <div class="metric-lbl">Iteraciones Ejecutadas</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-val blue" id="loop-target-score">7.0 / 10</div>
+                        <div class="metric-lbl">Umbral Mínimo Requerido</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-val green" id="loop-max-score">0.0</div>
+                        <div class="metric-lbl">Máxima Puntuación Obtenida</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-val amber" id="loop-status-text">ACTIVO</div>
+                        <div class="metric-lbl">Estado del Agente</div>
+                    </div>
+                </div>
+
+                <div class="data-card">
+                    <div class="data-header">
+                        <h3>🔄 Historial de Iteraciones y Aprendizaje del Agente</h3>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="intel-table">
+                            <thead>
+                                <tr>
+                                    <th>Iteración</th>
+                                    <th>Evidencias Procesadas</th>
+                                    <th>Score Promedio</th>
+                                    <th>Score Máximo</th>
+                                    <th>Estado</th>
+                                    <th>Términos & Palabras Clave Utilizadas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="iterations-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Cargando historial de iteraciones...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: INFORME EJECUTIVO -->
+            <div id="tab-report" class="tab-content">
+                <div class="data-card">
+                    <div class="data-header">
+                        <div>
+                            <h3>📄 Dictamen Forense de Ciberinteligencia</h3>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Informe consolidado y conclusiones del análisis multi-fuente</div>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                            <button class="btn btn-primary btn-sm" onclick="downloadExecutiveReportPDF()">📥 Descargar Informe PDF</button>
+                            <button class="btn btn-ghost btn-sm" onclick="openExecutiveReportPDFInNewTab()">↗️ Abrir en PDF</button>
+                            <span class="badge badge-early" id="report-badge-exec">EVALUACIÓN MULTI-FUENTE</span>
+                        </div>
+                    </div>
+                    <div id="report-content-full" style="font-size: 14px; line-height: 1.7; color: var(--text-main);">
+                        Cargando informe ejecutivo...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Expanded OSINT Post Summary & PDF Preview Modal -->
+    <div id="post-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+                        <span class="badge badge-early" id="modal-category">CATEGORÍA</span>
+                        <span class="badge badge-official" id="modal-score-badge">SCORE: 8.5 / 10</span>
+                    </div>
+                    <div class="modal-title" id="modal-title">Titular de la Evidencia</div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary btn-sm" onclick="downloadCurrentPostPDF()">📥 Descargar PDF</button>
+                    <button class="btn btn-ghost btn-sm" onclick="openCurrentPostPDFInNewTab()">↗️ Abrir PDF</button>
+                    <a id="modal-url" href="#" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration: none;">🔗 Web Original</a>
+                    <button class="modal-close" onclick="closePostModal()">&times;</button>
+                </div>
+            </div>
+
+            <!-- Modal Sub-Tabs -->
+            <div class="modal-tabs">
+                <button class="modal-tab-btn active" id="modal-tab-btn-pdf" onclick="switchModalTab('pdf')">📄 Vista Previa Documento PDF</button>
+                <button class="modal-tab-btn" id="modal-tab-btn-data" onclick="switchModalTab('data')">🔍 Ficha y Análisis Forense</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- PANEL 1: VISTA PREVIA PDF NATIVA / EMBEDDED -->
+                <div id="modal-panel-pdf" style="display: block;">
+                    <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted);">
+                        <span>Vista previa interactiva del dossier de inteligencia en formato PDF:</span>
+                        <a href="javascript:void(0)" onclick="downloadCurrentPostPDF()" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">📥 Descarga directa (.pdf)</a>
+                    </div>
+                    <iframe id="modal-pdf-iframe" src="" style="width: 100%; height: 530px; border: 1px solid var(--border); border-radius: 8px; background: #ffffff;"></iframe>
+                </div>
+
+                <!-- PANEL 2: FICHA ESTRUCTURADA OSINT -->
+                <div id="modal-panel-data" style="display: none;">
+                    <div class="modal-section">
+                        <h4>Fuente & Publicación</h4>
+                        <p><strong id="modal-source"></strong> · Publicado el <span id="modal-date"></span></p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4>Resumen Ampliado & Extracto Completo</h4>
+                        <p id="modal-content-full" style="background: rgba(0,0,0,0.3); padding: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; line-height: 1.6;"></p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4>Entidades & Términos Detectados (OSINT)</h4>
+                        <div id="modal-entities"></div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4>Puntuación de Confidencia (Scoring Breakdown)</h4>
+                        <div class="breakdown-grid">
+                            <div class="breakdown-item">
+                                <div class="lbl">Autoridad Fuente</div>
+                                <div class="val" id="modal-score-auth">0.0</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="lbl">Corroboración</div>
+                                <div class="val" id="modal-score-corr">0.0</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="lbl">Lead Time Temporal</div>
+                                <div class="val" id="modal-score-temp">0.0</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="lbl">Especificidad</div>
+                                <div class="val" id="modal-score-spec">0.0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dedicated Finding Forensic Dossier Modal -->
+    <div id="finding-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+                        <span class="badge badge-cta" id="finding-modal-vector">VECTOR TÁCTICO</span>
+                        <span class="badge badge-official" id="finding-modal-score">CONFIANZA: 9.0 / 10</span>
+                    </div>
+                    <div class="modal-title" id="finding-modal-title">Dossier de Hallazgo Forense</div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary btn-sm" onclick="downloadCurrentFindingPDF()">📥 Descargar Dossier PDF</button>
+                    <button class="btn btn-ghost btn-sm" onclick="openCurrentFindingPDFInNewTab()">↗️ Abrir PDF</button>
+                    <button class="modal-close" onclick="closeFindingModal()">&times;</button>
+                </div>
+            </div>
+
+            <!-- Modal Sub-Tabs -->
+            <div class="modal-tabs">
+                <button class="modal-tab-btn active" id="finding-tab-btn-pdf" onclick="switchFindingModalTab('pdf')">📄 Vista Previa Documento PDF</button>
+                <button class="modal-tab-btn" id="finding-tab-btn-data" onclick="switchFindingModalTab('data')">🔍 Contexto & Evidencias Corroboradas</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- PANEL 1: VISTA PREVIA PDF NATIVA / EMBEDDED -->
+                <div id="finding-panel-pdf" style="display: block;">
+                    <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted);">
+                        <span>Dossier analítico oficial emitido por el motor OSINT en formato PDF:</span>
+                        <a href="javascript:void(0)" onclick="downloadCurrentFindingPDF()" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">📥 Descarga directa (.pdf)</a>
+                    </div>
+                    <iframe id="finding-pdf-iframe" src="" style="width: 100%; height: 530px; border: 1px solid var(--border); border-radius: 8px; background: #ffffff;"></iframe>
+                </div>
+
+                <!-- PANEL 2: DETALLES ESTRUCTURADOS Y EVIDENCIAS -->
+                <div id="finding-panel-data" style="display: none;">
+                    <div class="modal-section">
+                        <h4>Enunciado del Hallazgo Forense</h4>
+                        <p id="finding-modal-desc" style="background: rgba(0, 242, 254, 0.08); border-left: 3px solid var(--accent-blue); padding: 14px; border-radius: 0 8px 8px 0; font-size: 14px; font-weight: 600; line-height: 1.6; color: #fff;"></p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4>Evaluación y Contexto Operativo</h4>
+                        <p id="finding-modal-details" style="background: rgba(255, 255, 255, 0.03); padding: 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; line-height: 1.6;"></p>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4>Indicadores Clave y Señales Observadas</h4>
+                        <div id="finding-modal-indicators"></div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4>Evidencias de Corroboración Directa</h4>
+                        <div id="finding-modal-posts"></div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h4>Recomendaciones Operativas</h4>
+                        <ul id="finding-modal-recs" style="padding-left: 20px; font-size: 13px; line-height: 1.7; color: var(--text-main);"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
